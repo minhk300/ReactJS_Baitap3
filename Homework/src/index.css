@@ -27,3 +27,9 @@ a, a:hover {
 .card {
   border: none;
 }
+
+.card-img-top {
+  width: 100%;
+  height: 50vw;
+  object-fit: cover;
+}
