@@ -1,13 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
 import App from './App';
 import * as serviceWorker from "./serviceWorker";
 // After npm install jquery popper bs, import Bootstrap CSS
 import "bootstrap/dist/css/bootstrap.min.css";
-import "jquery/dist/jquery";
+import './index.css';
+import "jquery";
 import "popper.js/dist/umd/popper";
-import "bootstrap/dist/js/bootstrap";
+import "bootstrap";
 
 
 ReactDOM.render(<App />,document.getElementById('root'));

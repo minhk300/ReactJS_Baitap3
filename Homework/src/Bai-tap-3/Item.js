@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 
 export class Item extends Component {
   render() {
-    console.log(this.props.details.imgSrc);
     return (
       <div>
         <div className="col-xs-12 col-sm-6 col-md-6 col-lg-3 col-lg-3">
