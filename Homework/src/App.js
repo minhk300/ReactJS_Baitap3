@@ -1,12 +1,12 @@
 import React from 'react';
 import './App.css';
-// import Baitap3 from './Bai-tap-3';
-import BaitapList from './Bai-tap-list';
+import LiftingStateUpCart from "./lifting-state-up-cart";
+
 
 function App() {
   return (
     <div>
-      <BaitapList />
+      <LiftingStateUpCart />
     </div>
   );
 }
