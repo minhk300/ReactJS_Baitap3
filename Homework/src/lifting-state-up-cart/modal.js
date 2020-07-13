@@ -1,22 +1,59 @@
 import React, { Component } from "react";
 
 export default class Modal extends Component {
-  renderModal = () => {
-    const { listProductAdded } = this.props;
-    const maSPchecked = [];
-    const finalCart = [];
-    listProductAdded.forEach(product => {
-      let maSP = product.maSP;
-      if (!maSP in maSPchecked) {
-        maSPchecked.push(maSP);
-        let count = listProductAdded.length - listProductAdded.filter(product => product.maSP != maSP).length;
-        // console.log(count)
-        
-      }
-    })
-    
+  addProductCb = (product) => {
+    this.props.addProduct(product);
   }
-  
+
+  decreaseProductCb = (product) => {
+    this.props.decreaseProduct(product);
+  }
+
+  // Đoạn này có j đó cồng kềnh (?) :v
+  deleteProductCb = (product) => {
+    this.props.deleteProduct(product);
+    const rowNodeLst = document.querySelectorAll("#modelId .modal-body tbody tr");
+    for (let node of rowNodeLst) {
+      if (node.childNodes[0].innerHTML == product.maSP) {
+        node.style.display = "none";
+      }
+    }
+  }
+
+  unHideDOM = () => {
+    const rowNodeLst = document.querySelectorAll("#modelId .modal-body tbody tr");
+    for (let node of rowNodeLst) {
+      node.style.display = "table-row";
+    }
+  }
+
+  renderModal = () => {
+    const { listProduct } = this.props;
+    return listProduct.map(product => (
+      <tr key={product.maSP}>
+        <td>{product.maSP}</td>
+        <td>{product.tenSP}</td>
+        <td>
+          <img src={product.hinhAnh} width={50} alt="" />
+        </td>
+        <td>
+          <button
+            onClick={() => this.decreaseProductCb(product)}
+          >-</button>
+          {product.inCart}
+          <button
+            onClick={() => this.addProductCb(product)}
+          >+</button>
+        </td>
+        <td>{product.giaBan.toLocaleString()}</td>
+        <td>{(product.giaBan * product.inCart).toLocaleString()}</td>
+        <td>
+          <button className="btn btn-danger" onClick={() => this.deleteProductCb(product)}>Delete</button>
+        </td>
+      </tr>
+    ))
+  }
+
   render() {
     return (
       <div
@@ -57,21 +94,7 @@ export default class Modal extends Component {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td>1</td>
-                    <td>VinSmart Live</td>
-                    <td>
-                      <img src="./img/vsphone.jpg" width={50} alt="" />
-                    </td>
-                    <td>
-                      <button>-</button>1<button>+</button>
-                    </td>
-                    <td>5700000</td>
-                    <td>5700000</td>
-                    <td>
-                      <button className="btn btn-danger">Delete</button>
-                    </td>
-                  </tr>
+                  {this.renderModal()}
                 </tbody>
               </table>
             </div>
@@ -80,6 +103,7 @@ export default class Modal extends Component {
                 type="button"
                 className="btn btn-secondary"
                 data-dismiss="modal"
+                onClick={this.unHideDOM}
               >
                 Close
               </button>

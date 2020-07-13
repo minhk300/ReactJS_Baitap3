@@ -9,25 +9,68 @@ export default class LiftingStateUpCart extends Component {
     this.state = {
       listProduct: data.map(product => ({...product, "inCart": 0})),
       productDetail: data[0],
-      listProductAdded: []
+      // listProductAdded: [],
     }
   }
-  // cập nhật Hiển thị sản phẩm
+  // cập nhật Hiển thị sản phẩm khi chọn Chi tiết
   handleProductDetail = (product) => {
     this.setState({productDetail: product})
   }
   // thêm sản phẩm đã chọn vào danh sách listProductAdded
+  // addProduct = (product) => {
+  //   this.setState({
+  //     listProductAdded: [...this.state.listProductAdded, product]
+  //   }, () => {
+  //     console.log(this.state.listProductAdded);
+  //     console.log('Da add product vao list');
+  //   })
+  // }
+
+  // tính tổng số product trong Giỏ hàng
+  inCartCal = () => {
+    const { listProduct } = this.state;
+    return listProduct.reduce((acc, {inCart}) => acc + inCart, 0);
+  }
+
+  // tăng số sp trong Giỏ 
   addProduct = (product) => {
     this.setState({
-      listProductAdded: [...this.state.listProductAdded, product]
-    }, () => {
-      console.log(this.state.listProductAdded);
-      console.log('Da add product vao list')
+      listProduct: this.state.listProduct.map(item => {
+        if (item.maSP === product.maSP) {
+          item.inCart += 1;
+        }
+        return item;
+      })
     })
   }
 
+  // Giảm số sp trong Giỏ 
+  decreaseProduct = (product) => {
+    this.setState({
+      listProduct: this.state.listProduct.map(item => {
+        if (item.maSP === product.maSP) {
+          // negative value not allowed
+          item.inCart = Math.max(item.inCart -= 1, 0);
+        }
+        return item;
+      })
+    })
+  }
+
+  // Nhấn Delete trong Modal => reset số sp trong Giỏ về 0
+  deleteProduct = (product) => {
+    this.setState({
+      listProduct: this.state.listProduct.map(item => {
+        if (item.maSP === product.maSP) {
+          item.inCart = 0;
+        }
+      return item;
+      })
+    })
+  }
+  
   render() {
-    const { listProduct, productDetail, listProductAdded } = this.state;
+    const { listProduct, productDetail } = this.state;
     return (
       <div>
         {/* Tiêu đề */}
@@ -40,10 +83,15 @@ export default class LiftingStateUpCart extends Component {
             data-toggle="modal"
             data-target="#modelId"
           >
-            Giỏ hàng ({listProductAdded.length})
+            Giỏ hàng ({this.inCartCal()})
           </button>
         </div>
-        <Modal listProductAdded={listProductAdded}/>
+        <Modal 
+          listProduct={listProduct}
+          addProduct={this.addProduct}
+          decreaseProduct={this.decreaseProduct}
+          deleteProduct={this.deleteProduct}
+        />
 
         {/* Danh sách sản phẩm */}
         <DanhSachSanPham 
