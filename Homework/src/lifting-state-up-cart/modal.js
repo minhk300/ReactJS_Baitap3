@@ -10,6 +10,7 @@ export default class Modal extends Component {
   }
 
   // Đoạn này có j đó cồng kềnh (?) :v
+  // Delete Button => hide tr Node
   deleteProductCb = (product) => {
     this.props.deleteProduct(product);
     const rowNodeLst = document.querySelectorAll("#modelId .modal-body tbody tr");
@@ -20,6 +21,7 @@ export default class Modal extends Component {
     }
   }
 
+  // Close Button => Unhide tr Node bên trên
   unHideDOM = () => {
     const rowNodeLst = document.querySelectorAll("#modelId .modal-body tbody tr");
     for (let node of rowNodeLst) {
