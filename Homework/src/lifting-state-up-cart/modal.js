@@ -9,29 +9,31 @@ export default class Modal extends Component {
     this.props.decreaseProduct(product);
   }
 
-  // Đoạn này có j đó cồng kềnh (?) :v
-  // Delete Button => hide tr Node
   deleteProductCb = (product) => {
     this.props.deleteProduct(product);
-    const rowNodeLst = document.querySelectorAll("#modelId .modal-body tbody tr");
-    for (let node of rowNodeLst) {
-      if (node.childNodes[0].innerHTML == product.maSP) {
-        node.style.display = "none";
-      }
-    }
+    // Đoạn này ngu vl :v =))))
+    // const rowNodeLst = document.querySelectorAll("#modelId .modal-body tbody tr");
+    // for (let node of rowNodeLst) {
+    //   if (node.childNodes[0].innerHTML == product.maSP) {
+    //     node.style.display = "none";
+    //   }
+    // }
   }
 
   // Close Button => Unhide tr Node bên trên
-  unHideDOM = () => {
-    const rowNodeLst = document.querySelectorAll("#modelId .modal-body tbody tr");
-    for (let node of rowNodeLst) {
-      node.style.display = "table-row";
-    }
-  }
+  // unHideDOM = () => {
+  //   const rowNodeLst = document.querySelectorAll("#modelId .modal-body tbody tr");
+  //   for (let node of rowNodeLst) {
+  //     node.style.display = "table-row";
+  //   }
+  // }
 
   renderModal = () => {
     const { listProduct } = this.props;
-    return listProduct.map(product => (
+    return listProduct
+      // only render inCart > 0
+      .filter(product=> product.inCart > 0)
+      .map(product => (
       <tr key={product.maSP}>
         <td>{product.maSP}</td>
         <td>{product.tenSP}</td>
@@ -105,7 +107,6 @@ export default class Modal extends Component {
                 type="button"
                 className="btn btn-secondary"
                 data-dismiss="modal"
-                onClick={this.unHideDOM}
               >
                 Close
               </button>

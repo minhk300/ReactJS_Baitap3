@@ -9,23 +9,14 @@ export default class LiftingStateUpCart extends Component {
     this.state = {
       listProduct: data.map(product => ({...product, "inCart": 0})),
       productDetail: data[0],
-      // listProductAdded: [],
+      // listProductAdded: [], => not use
     }
   }
   // cập nhật Hiển thị sản phẩm khi chọn Chi tiết
   handleProductDetail = (product) => {
     this.setState({productDetail: product})
   }
-  // thêm sản phẩm đã chọn vào danh sách listProductAdded
-  // addProduct = (product) => {
-  //   this.setState({
-  //     listProductAdded: [...this.state.listProductAdded, product]
-  //   }, () => {
-  //     console.log(this.state.listProductAdded);
-  //     console.log('Da add product vao list');
-  //   })
-  // }
-
+  
   // tính tổng số product trong Giỏ hàng
   inCartCal = () => {
     const { listProduct } = this.state;
@@ -49,8 +40,8 @@ export default class LiftingStateUpCart extends Component {
     this.setState({
       listProduct: this.state.listProduct.map(item => {
         if (item.maSP === product.maSP) {
-          // negative value not allowed
-          item.inCart = Math.max(item.inCart -= 1, 0);
+          // negative value not allowed => no need anymore
+          item.inCart -= 1;
         }
         return item;
       })
