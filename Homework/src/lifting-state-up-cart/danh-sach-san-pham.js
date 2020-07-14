@@ -3,22 +3,22 @@ import SanPham from "./san-pham";
 
 
 export default class DanhSachSanPham extends Component {
-  renderSanPham = () => {
+  renderHTML = () => {
     const { listProduct } = this.props;
-    return listProduct.map(product =>
+    return listProduct.map(product => (
       <SanPham
         key={product.maSP}
-        productDetail={product}
-        handleProductDetail={this.props.handleProductDetail}
-        addProduct={this.props.addProduct}
-      />
-    )
+        product={product}
+        handleProduct={this.props.handleProduct}
+        addCart={this.props.addCart}
+      />))
   }
   render() {
+    // const { listProduct } = this.props.listProduct;
     return (
       <div className="container">
         <div className="row">
-          {this.renderSanPham()}
+          {this.renderHTML()}
         </div>
       </div>
     );

@@ -3,109 +3,95 @@ import DanhSachSanPham from "./danh-sach-san-pham";
 import Modal from "./modal";
 import data from "./data.json";
 
+
 export default class LiftingStateUpCart extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      listProduct: data.map(product => ({...product, "inCart": 0})),
-      productDetail: data[0],
-      // listProductAdded: [],
+      listProduct: data,
+      detailProduct: data[0],
+      listCart: []
     }
   }
-  // cập nhật Hiển thị sản phẩm khi chọn Chi tiết
-  handleProductDetail = (product) => {
-    this.setState({productDetail: product})
-  }
-  // thêm sản phẩm đã chọn vào danh sách listProductAdded
-  // addProduct = (product) => {
-  //   this.setState({
-  //     listProductAdded: [...this.state.listProductAdded, product]
-  //   }, () => {
-  //     console.log(this.state.listProductAdded);
-  //     console.log('Da add product vao list');
-  //   })
-  // }
 
-  // tính tổng số product trong Giỏ hàng
-  inCartCal = () => {
-    const { listProduct } = this.state;
-    return listProduct.reduce((acc, {inCart}) => acc + inCart, 0);
-  }
-
-  // tăng số sp trong Giỏ 
-  addProduct = (product) => {
+  handleProduct = (product) => {
     this.setState({
-      listProduct: this.state.listProduct.map(item => {
-        if (item.maSP === product.maSP) {
-          item.inCart += 1;
-        }
-        return item;
-      })
+      detailProduct: product
     })
   }
 
-  // Giảm số sp trong Giỏ 
-  decreaseProduct = (product) => {
-    this.setState({
-      listProduct: this.state.listProduct.map(item => {
-        if (item.maSP === product.maSP) {
-          // negative value not allowed
-          item.inCart = Math.max(item.inCart -= 1, 0);
-        }
-        return item;
-      })
-    })
+  // handle Add new product to Cart + increase Cart if product already exist
+  handleAddCart = (product) => {
+    let listCart = [...this.state.listCart];
+
+    let index = listCart.findIndex(item => item.maSP === product.maSP);
+    if (index === -1) {
+      product.inCart = 1;
+      listCart.push(product);
+    } else {
+      listCart[index].inCart += 1;
+    }
+
+    this.setState({ listCart });
+    // !! setState asynchronous => cannot use console.log(this.state.listCart) to view
+      // () => console.log('New updated listCart: \n', this.state.listCart));
   }
 
-  // Nhấn Delete trong Modal => reset số sp trong Giỏ về 0
-  deleteProduct = (product) => {
-    this.setState({
-      listProduct: this.state.listProduct.map(item => {
-        if (item.maSP === product.maSP) {
-          item.inCart = 0;
-        }
-      return item;
-      })
-    })
+  handleDecreaseCart = (product) => {
+    let listCart = [...this.state.listCart];
+    let index = listCart.findIndex(item => item.maSP === product.maSP);
+    listCart[index].inCart -= 1;
+    this.setState({ listCart });
   }
-  
+
+  handleDeleteCart = (product) => {
+    let listCart = [...this.state.listCart];
+    listCart = listCart.filter(item => item.maSP !== product.maSP)
+    this.setState({ listCart });
+  }
+
+  totalInCartCount = () => {
+    const { listCart } = this.state;
+    console.log(listCart);
+    return listCart.reduce((total, { inCart }) => total + inCart, 0);
+  }
+
   render() {
-    const { listProduct, productDetail } = this.state;
+    const { listProduct, detailProduct, listCart } = this.state;
+
     return (
       <div>
-        {/* Tiêu đề */}
-        <h3 className="title text-center text-uppercase">Bài tập giỏ hàng</h3>
-
-        {/* Giỏ hàng button + Modal pop-up */}
+        <h3 className="title">Bài tập giỏ hàng</h3>
         <div className="container">
           <button
             className="btn btn-danger"
             data-toggle="modal"
             data-target="#modelId"
           >
-            Giỏ hàng ({this.inCartCal()})
+            Giỏ hàng ({this.totalInCartCount()})
           </button>
         </div>
-        <Modal 
+
+        {/* !!! */}
+        <DanhSachSanPham
           listProduct={listProduct}
-          addProduct={this.addProduct}
-          decreaseProduct={this.decreaseProduct}
-          deleteProduct={this.deleteProduct}
+          handleProduct={this.handleProduct}
+          addCart={this.handleAddCart}
         />
 
-        {/* Danh sách sản phẩm */}
-        <DanhSachSanPham 
-          handleProductDetail={this.handleProductDetail} 
-          addProduct={this.addProduct}
-          listProduct={listProduct}
-          />
+        {/*  */}
+        {/*  */}
+        <Modal 
+          listCart={listCart} 
+          handleAddCart={this.handleAddCart}
+          handleDecreaseCart={this.handleDecreaseCart}
+          handleDeleteCart={this.handleDeleteCart}
+        />
 
-
-
-        {/* Hiển thị sản phẩm */}
+        {/* Product Detail Render */}
         <div className="row">
           <div className="col-sm-5">
-            <img className="img-fluid" src={productDetail.hinhAnh} alt="" />
+            <img className="img-fluid" src={detailProduct.hinhAnh} alt="" />
           </div>
           <div className="col-sm-7">
             <h3>Thông số kỹ thuật</h3>
@@ -113,31 +99,27 @@ export default class LiftingStateUpCart extends Component {
               <tbody>
                 <tr>
                   <td>Màn hình</td>
-                  <td>{productDetail.manHinh}</td>
+                  <td>{detailProduct.manHinh}</td>
                 </tr>
                 <tr>
                   <td>Hệ điều hành</td>
-                  <td>{productDetail.heDieuHanh}</td>
+                  <td>{detailProduct.heDieuHanh}</td>
                 </tr>
                 <tr>
                   <td>Camera trước</td>
-                  <td>{productDetail.cameraTruoc}</td>
+                  <td>{detailProduct.cameraTruoc}</td>
                 </tr>
                 <tr>
                   <td>Camera sau</td>
-                  <td>{productDetail.cameraSau}</td>
+                  <td>{detailProduct.cameraSau}</td>
                 </tr>
                 <tr>
                   <td>RAM</td>
-                  <td>{productDetail.ram}</td>
+                  <td>{detailProduct.ram}</td>
                 </tr>
                 <tr>
                   <td>ROM</td>
-                  <td>{productDetail.rom}</td>
-                </tr>
-                <tr>
-                  <td>Giá bán</td>
-                  <td>{productDetail.giaBan}</td>
+                  <td>{detailProduct.rom}</td>
                 </tr>
               </tbody>
             </table>

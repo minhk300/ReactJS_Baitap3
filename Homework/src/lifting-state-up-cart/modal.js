@@ -1,37 +1,19 @@
 import React, { Component } from "react";
 
 export default class Modal extends Component {
-  addProductCb = (product) => {
-    this.props.addProduct(product);
+  increaseInCart = (product) => {
+    this.props.handleAddCart(product);
   }
 
-  decreaseProductCb = (product) => {
-    this.props.decreaseProduct(product);
+  decreaseInCart = (product) => {
+    this.props.handleDecreaseCart(product);
   }
-
-  // Đoạn này có j đó cồng kềnh (?) :v
-  // Delete Button => hide tr Node
-  deleteProductCb = (product) => {
-    this.props.deleteProduct(product);
-    const rowNodeLst = document.querySelectorAll("#modelId .modal-body tbody tr");
-    for (let node of rowNodeLst) {
-      if (node.childNodes[0].innerHTML == product.maSP) {
-        node.style.display = "none";
-      }
-    }
+  deleteInCart = (product) => {
+    this.props.handleDeleteCart(product);
   }
-
-  // Close Button => Unhide tr Node bên trên
-  unHideDOM = () => {
-    const rowNodeLst = document.querySelectorAll("#modelId .modal-body tbody tr");
-    for (let node of rowNodeLst) {
-      node.style.display = "table-row";
-    }
-  }
-
-  renderModal = () => {
-    const { listProduct } = this.props;
-    return listProduct.map(product => (
+  renderProductRow = () => {
+    const {listCart} = this.props;
+    return listCart.map(product => (
       <tr key={product.maSP}>
         <td>{product.maSP}</td>
         <td>{product.tenSP}</td>
@@ -40,17 +22,23 @@ export default class Modal extends Component {
         </td>
         <td>
           <button
-            onClick={() => this.decreaseProductCb(product)}
+            onClick={()=>this.decreaseInCart(product)}
+            disabled={product.inCart === 1}
           >-</button>
-          {product.inCart}
+            {product.inCart}
           <button
-            onClick={() => this.addProductCb(product)}
+            onClick={()=> this.increaseInCart(product)}
           >+</button>
         </td>
-        <td>{product.giaBan.toLocaleString()}</td>
-        <td>{(product.giaBan * product.inCart).toLocaleString()}</td>
+        <td>{product.giaBan}</td>
+        <td>{product.giaBan * product.inCart}</td>
         <td>
-          <button className="btn btn-danger" onClick={() => this.deleteProductCb(product)}>Delete</button>
+          <button 
+            className="btn btn-danger"
+            onClick={()=> this.deleteInCart(product)}
+          >
+            Delete
+          </button>
         </td>
       </tr>
     ))
@@ -96,7 +84,7 @@ export default class Modal extends Component {
                   </tr>
                 </thead>
                 <tbody>
-                  {this.renderModal()}
+                  {this.renderProductRow()}
                 </tbody>
               </table>
             </div>
@@ -105,7 +93,6 @@ export default class Modal extends Component {
                 type="button"
                 className="btn btn-secondary"
                 data-dismiss="modal"
-                onClick={this.unHideDOM}
               >
                 Close
               </button>
