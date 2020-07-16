@@ -1,8 +1,50 @@
 import React, { Component } from "react";
 
 export default class Modal extends Component {
+  increaseInCart = (product) => {
+    this.props.handleAddCart(product);
+  }
+
+  decreaseInCart = (product) => {
+    this.props.handleDecreaseCart(product);
+  }
+  deleteInCart = (product) => {
+    this.props.handleDeleteCart(product);
+  }
+  renderProductRow = () => {
+    const {listCart} = this.props;
+    return listCart.map(product => (
+      <tr key={product.maSP}>
+        <td>{product.maSP}</td>
+        <td>{product.tenSP}</td>
+        <td>
+          <img src={product.hinhAnh} width={50} alt="" />
+        </td>
+        <td>
+          <button
+            onClick={()=>this.decreaseInCart(product)}
+            disabled={product.inCart === 1}
+          >-</button>
+            {product.inCart}
+          <button
+            onClick={()=> this.increaseInCart(product)}
+          >+</button>
+        </td>
+        <td>{product.giaBan}</td>
+        <td>{product.giaBan * product.inCart}</td>
+        <td>
+          <button 
+            className="btn btn-danger"
+            onClick={()=> this.deleteInCart(product)}
+          >
+            Delete
+          </button>
+        </td>
+      </tr>
+    ))
+  }
+
   render() {
-    console.log(this.props);
     return (
       <div
         className="modal fade"
@@ -42,21 +84,7 @@ export default class Modal extends Component {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td>1</td>
-                    <td>VinSmart Live</td>
-                    <td>
-                      <img src="./img/vsphone.jpg" width={50} alt="" />
-                    </td>
-                    <td>
-                      <button>-</button>1<button>+</button>
-                    </td>
-                    <td>5700000</td>
-                    <td>5700000</td>
-                    <td>
-                      <button className="btn btn-danger">Delete</button>
-                    </td>
-                  </tr>
+                  {this.renderProductRow()}
                 </tbody>
               </table>
             </div>

@@ -13,7 +13,7 @@ export default class SanPham extends Component {
     this.props.addCart(product);
   }
   render() {
-    const {product} = this.props;
+    const { product } = this.props;
     // console.log(product);
     return (
       <div className="col-sm-4">

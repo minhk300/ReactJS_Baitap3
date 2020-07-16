@@ -5,14 +5,11 @@ import data from "./data.json";
 
 
 export default class LiftingStateUpCart extends Component {
-  // (1)
   constructor(props) {
     super(props);
     this.state = {
       listProduct: data,
-      // state dynamic add
       detailProduct: data[0],
-      // state dynamic - array type
       listCart: []
     }
   }
@@ -22,14 +19,46 @@ export default class LiftingStateUpCart extends Component {
       detailProduct: product
     })
   }
+
+  // handle Add new product to Cart + increase Cart if product already exist
   handleAddCart = (product) => {
-    // console.log(product);
+    let listCart = [...this.state.listCart];
+
+    let index = listCart.findIndex(item => item.maSP === product.maSP);
+    if (index === -1) {
+      product.inCart = 1;
+      listCart.push(product);
+    } else {
+      listCart[index].inCart += 1;
+    }
+
+    this.setState({ listCart });
     // !! setState asynchronous => cannot use console.log(this.state.listCart) to view
-    this.setState({ listCart: [...this.state.listCart, product] }, 
-      () => console.log(this.state.listCart));
+      // () => console.log('New updated listCart: \n', this.state.listCart));
   }
+
+  handleDecreaseCart = (product) => {
+    let listCart = [...this.state.listCart];
+    let index = listCart.findIndex(item => item.maSP === product.maSP);
+    listCart[index].inCart -= 1;
+    this.setState({ listCart });
+  }
+
+  handleDeleteCart = (product) => {
+    let listCart = [...this.state.listCart];
+    listCart = listCart.filter(item => item.maSP !== product.maSP)
+    this.setState({ listCart });
+  }
+
+  totalInCartCount = () => {
+    const { listCart } = this.state;
+    console.log(listCart);
+    return listCart.reduce((total, { inCart }) => total + inCart, 0);
+  }
+
   render() {
     const { listProduct, detailProduct, listCart } = this.state;
+
     return (
       <div>
         <h3 className="title">Bài tập giỏ hàng</h3>
@@ -39,20 +68,27 @@ export default class LiftingStateUpCart extends Component {
             data-toggle="modal"
             data-target="#modelId"
           >
-            Giỏ hàng (0)
+            Giỏ hàng ({this.totalInCartCount()})
           </button>
         </div>
 
         {/* !!! */}
-        <DanhSachSanPham 
-          listProduct={listProduct} 
+        <DanhSachSanPham
+          listProduct={listProduct}
           handleProduct={this.handleProduct}
           addCart={this.handleAddCart}
-          />
+        />
 
         {/*  */}
         {/*  */}
-        <Modal listCart={listCart}/>
+        <Modal 
+          listCart={listCart} 
+          handleAddCart={this.handleAddCart}
+          handleDecreaseCart={this.handleDecreaseCart}
+          handleDeleteCart={this.handleDeleteCart}
+        />
+
+        {/* Product Detail Render */}
         <div className="row">
           <div className="col-sm-5">
             <img className="img-fluid" src={detailProduct.hinhAnh} alt="" />
